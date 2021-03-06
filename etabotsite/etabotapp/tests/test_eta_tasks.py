@@ -66,3 +66,43 @@ class TestEmailNotificationsTestCases(TestCase):
         assert isinstance(self.project, Project)
         assert isinstance(self.project.project_settings, dict)
         et.estimate_ETA_for_TMS(self.tms, [self.project])
+
+class TestStoreReportsInProjectSettings(TestCase):
+    def setUp(self):
+        # We want to go ahead and originally create a user.
+        self.user = User.objects.create_user('testuser',
+                                             'testuser@example.com',
+                                             'testpassword')
+
+        #Test user must have valid email to test!
+        logging.debug('self.user.email: {}'.format(self.user.email))
+        self.assertTrue('testuser@example.com' == self.user.email)
+
+        self.tms = TMS(owner=self.user, **test_tms_data)
+        self.tms.save()
+        self.project_name = "ETAbot-Demo"
+        self.project_mode = "scrum"
+        self.project_open_status = "ToDo"
+        self.project_grace_period = "24"
+        self.project_work_hours = {
+            1: (10, 14), 2: (16, 20), 3: (10, 14), 4: (16, 18), 5: (20, 21), 6: (23, 23), 0: (9, 10)}
+        self.project_vacation_days = [
+            ('2017-04-21', '2017-04-30'),
+            ('2017-05-16', '2017-05-19'),
+            ('2017-05-24', '2017-05-24'),
+            ('2017-05-29', '2017-05-29')]
+        self.project = Project(owner=self.user, project_tms=self.tms,
+                               name=self.project_name,
+                               mode=self.project_mode,
+                               open_status=self.project_open_status,
+                               grace_period=self.project_grace_period,
+                               work_hours=self.project_work_hours,
+                               vacation_days=self.project_vacation_days,
+                               project_settings={})
+        self.project.save()
+
+    def test_is_report_in_project_settings(self):
+        dt.estimate_ETA_for_TMS(self.TMS,[self.project])
+        assert isinstance(self.project.project_settings, dict)
+        self.assertEqual(self.project.project_settings, {'report',
+                                                         'hierarchicalReport'})
