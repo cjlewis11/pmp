@@ -123,6 +123,23 @@ class HierarchicalReportNode:
     def all_reports(self) -> List[BasicReport]:
         return [node.report for node in self.all_nodes()]
 
+    def to_json(self) -> {}:
+        jsonReport = {
+            'project':self.project,
+            'project_on_track':self.project_on_track,
+            'entity_uuid':self.entity_uuid,
+            'entity_display_name':self.entity_display_name,
+            'due_dates_stats':self.due_dates_stats,
+            'sprint_stats':self.sprint_stats,
+            'velocity_report':self.velocity_report,
+            'aux':self.aux,
+            'params':self.params,
+            'params_str':self.params_str,
+            'tms_name':self.tms_name,
+            'html':self.html,
+            'children':[child.to_json for child in self.children]
+        }
+
 
 class VelocityReport:
     def __init__(self, summary: str, df_sprint_stats: pd.DataFrame, aux: str = ''):

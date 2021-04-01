@@ -25,7 +25,7 @@ class ReportGenerator:
         if ETApredict_obj is None:
             raise NameError('ETApredict_obj must be provided.')
         report = {
-            'project': 'Awesome Project',
+            'project': kwargs['project_names'][0],
             'project_status': DueAlert.unknown,
             'entity_uuid': '2358a398bcd',
             'entity_display_name': 'Cheburaskha',
@@ -36,7 +36,7 @@ class ReportGenerator:
             'params_str': 'taram param params',
             'tms_name': 'JIRA-example'
             }
-        return {'awesome project': HierarchicalReportNode(
+        return {report['project']: HierarchicalReportNode(
             report=BasicReport(**report), entity_uuid='AI')}
 
 #

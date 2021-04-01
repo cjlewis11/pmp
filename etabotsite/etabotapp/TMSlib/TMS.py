@@ -374,4 +374,5 @@ projects: "{}", hold tight!'.format(self, project_names))
         rg = ETAreport.ReportGenerator()
         reports = rg.generate_status_reports(
             self.ETApredict_obj, **kwargs)
+        logging.info(reports)
         return reports

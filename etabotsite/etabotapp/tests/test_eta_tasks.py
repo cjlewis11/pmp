@@ -102,7 +102,7 @@ class TestStoreReportsInProjectSettings(TestCase):
         self.project.save()
 
     def test_is_report_in_project_settings(self):
-        dt.estimate_ETA_for_TMS(self.TMS,[self.project])
+        et.estimate_ETA_for_TMS(self.tms,[self.project])
         assert isinstance(self.project.project_settings, dict)
         self.assertEqual(self.project.project_settings, {'report',
                                                          'hierarchicalReport'})

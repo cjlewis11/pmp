@@ -57,6 +57,7 @@ def estimate_ETA_for_TMS(
         project_names=project_names,
         **kwargs)
 
+    # raw_status_report is type: Dict[str, 'HierarchicalReportNode']
     raw_status_reports = tms_wrapper.generate_projects_status_report(
         project_names=project_names, **kwargs)
 
@@ -70,10 +71,14 @@ def estimate_ETA_for_TMS(
     for project in projects_set:
         project_settings = project.project_settings
         project_settings['report'] = html_report
-
+        logging.debug(raw_status_reports)
+        logging.debug(type(project))
+        hierarchicalReport = raw_status_reports[project]
+        logging.debug("Report Type: {}".format(hierarchicalReport.to_json()))
         # todo: save basic report and report hierarchy in to project model
 
-        project_settings['hierarchicalReport'] = raw_status_reports
+        #project_settings['hierarchicalReport'] = hierarchicalReport.to_json()
+
 
 
         logging.debug("saving project settings: {}".format(project_settings))
