@@ -23,7 +23,7 @@ If you already know how to create a python virtual environment, you can skip thi
     create virtual environement following https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 E.g.:
 ```
-conda create -n etabot python=3.6
+conda create -n etabot python=3.9
 ```
 Activate
 ```
@@ -75,15 +75,20 @@ For local development you can setup a postgres database in a few minutes using d
 
 
 ```docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -v ~/dir/:/var/lib/postgresql/data -d postgres```
-
+this will create root account with:
+username: postgres
+password: password
 
 ```docker ps```
 
-Execute database commands in your favorite tool (e.g. in a SQLWorkbench https://www.sql-workbench.eu/downloads.html)
+Execute database commands in your favorite tool (e.g. in a SQLWorkbench https://www.sql-workbench.eu/downloads.html, psql)
 ```SET AUTOCOMMIT = ON;```
 ```CREATE USER etabot WITH PASSWORD 'somepassword';```
 ```CREATE DATABASE etabot_db WITH OWNER etabot;```
 ```ALTER USER etabot CREATEDB;```
+
+if using psql and getting Fatal: role “username” does not exist, do this:
+```sudo -u postgres -i```
 
 change custom_settings.json with the new db interface (see section *Settings jsons*)
 
@@ -135,6 +140,8 @@ If needed, edit new migration files manually.
 Add migration files to commit.
 
 ## Troubleshooting
+
+
 ### production app.etabot.ai can't be reached
 Ensure that your /etc/hosts is not pointing to localhost
 
@@ -145,6 +152,12 @@ Ensure LOCAL_MODE is true in custom_settings.json to disable CORS for local deve
 ### TypeError: the JSON object must be str, not 'bytes'
 Ensure correct python version in your environment
 
+### RuntimeError: populate() isn't reentrant
+make sure dependencies are properly installed. to troubleshoot which dependencies, try replacing
+raise RuntimeError("populate() isn't reentrant") with self.app_configs = {}
+(ref: https://stackoverflow.com/questions/27093746/django-stops-working-with-runtimeerror-populate-isnt-reentrant)
+####
+https://stackoverflow.com/questions/56275454/i-cant-install-psycopg2-with-python3-on-mac-ive-installed-python3-and-pip3
 
 ## Testing
 
@@ -336,6 +349,12 @@ celery -A etabotsite beat -l INFO
 
 ### Issue "ImportError: The curl client requires the pycurl library."
 can be resolved on Mac with:
+
+```
+conda install pycurl
+```
+
+if that didn't work, try this:
 ```
 pip uninstall pycurl
 pip install --install-option="--with-openssl" --install-option="--openssl-dir=/usr/local/opt/openssl" pycurl
@@ -390,8 +409,8 @@ pip install --ignore-installed certifi
 start python and make sure you can import pycurl
 if not, try
 ```
-
-conda install pycurl```
+conda install pycurl
+```
 
 ### Networking errors
 add the following lines in case you run into Networking errors:
@@ -405,6 +424,8 @@ DOCKER_OPTS="--dns 8.8.8.8 --dns 10.252.252.252"
 - make sure you can import settings - if there is an error, there will be a silent fail in pytest django settings
 - ensure pytest-django is installed (in addition to pytest)
 
+### Django is not serving static files when DEBUG=True
+this is by design. static files should be served by nginx in production, in production DEBUG is False for security
 
 #### Maintenance
 
@@ -470,7 +491,10 @@ Note: Using the same mount path is not necessary.
 The previous command will create the container but it will exit immediately but we dont need it running to manage the volume.
 We now copy our certificate files to the volume through this container. The following commands copy these certs and rename these files to the `pmp_pmp-nginx-cert` volume via the `temp_volume` container.
 
-Security Note: for your production please generate your own pair of keys
+Security Note: for your production please generate your own pair of keys, for example:
+```
+openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+```
 
 ```
 $ docker cp nginx/certs/cert.pem temp-volume:/etc/ssl/certs/cert.pem
