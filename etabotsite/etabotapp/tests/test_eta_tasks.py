@@ -14,7 +14,6 @@ from etabotapp import django_tasks as dt
 from django.conf import settings
 import logging
 
-
 test_tms_data = getattr(settings, "TEST_TMS_DATA", {})
 
 
@@ -25,7 +24,7 @@ class TestEmailNotificationsTestCases(TestCase):
                                              'testuser@example.com',
                                              'testpassword')
 
-        #Test user must have valid email to test!
+        # Test user must have valid email to test!
         logging.debug('self.user.email: {}'.format(self.user.email))
         self.assertTrue('testuser@example.com' == self.user.email)
 
@@ -67,6 +66,7 @@ class TestEmailNotificationsTestCases(TestCase):
         assert isinstance(self.project.project_settings, dict)
         et.estimate_ETA_for_TMS(self.tms, [self.project])
 
+
 class TestStoreReportsInProjectSettings(TestCase):
     def setUp(self):
         # We want to go ahead and originally create a user.
@@ -74,7 +74,7 @@ class TestStoreReportsInProjectSettings(TestCase):
                                              'testuser@example.com',
                                              'testpassword')
 
-        #Test user must have valid email to test!
+        # Test user must have valid email to test!
         logging.debug('self.user.email: {}'.format(self.user.email))
         self.assertTrue('testuser@example.com' == self.user.email)
 
@@ -102,7 +102,7 @@ class TestStoreReportsInProjectSettings(TestCase):
         self.project.save()
 
     def test_is_report_in_project_settings(self):
-        et.estimate_ETA_for_TMS(self.tms,[self.project])
+        et.estimate_ETA_for_TMS(self.tms, [self.project])
         assert isinstance(self.project.project_settings, dict)
         self.assertEqual(self.project.project_settings, {'report',
-                                                         'hierarchicalReport'})
+                                                         'hierarchical_report'})

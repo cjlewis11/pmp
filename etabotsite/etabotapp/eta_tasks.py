@@ -72,16 +72,14 @@ def estimate_ETA_for_TMS(
         project_settings = project.project_settings
         project_settings['report'] = html_report
         logging.debug(raw_status_reports)
-        logging.debug(type(project))
-        hierarchicalReport = raw_status_reports[project]
-        logging.debug("Report Type: {}".format(hierarchicalReport.to_json()))
-        # todo: save basic report and report hierarchy in to project model
+        logging.debug(project.name)
+        hierarchical_report = raw_status_reports[project.name]
 
-        #project_settings['hierarchicalReport'] = hierarchicalReport.to_json()
+        project_settings['hierarchical_report'] = hierarchical_report.to_json()
 
 
 
-        logging.debug("saving project settings: {}".format(project_settings))
+        logging.debug("saving project settings: {}".format(project_settings['hierarchical_report']))
         project.project_settings = project_settings
 
         project.save()

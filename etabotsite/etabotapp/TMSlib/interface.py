@@ -124,20 +124,20 @@ class HierarchicalReportNode:
         return [node.report for node in self.all_nodes()]
 
     def to_json(self) -> {}:
-        jsonReport = {
-            'project':self.project,
-            'project_on_track':self.project_on_track,
-            'entity_uuid':self.entity_uuid,
-            'entity_display_name':self.entity_display_name,
-            'due_dates_stats':self.due_dates_stats,
-            'sprint_stats':self.sprint_stats,
-            'velocity_report':self.velocity_report,
-            'aux':self.aux,
-            'params':self.params,
-            'params_str':self.params_str,
-            'tms_name':self.tms_name,
-            'html':self.html,
-            'children':[child.to_json for child in self.children]
+        return {
+            'project': self.report.project,
+            'project_on_track': self.report.project_on_track,
+            'entity_uuid': self.report.entity_uuid,
+            'entity_display_name': self.report.entity_display_name,
+            'due_dates_stats': self.report.due_dates_stats,
+            'sprint_stats': self.report.sprint_stats,
+            'velocity_report': self.report.velocity_report,
+            'aux': self.report.aux,
+            'params': self.report.params,
+            'params_str': self.report.params_str,
+            'tms_name': self.report.tms_name,
+            'html': self.report.html,
+            'children': [child.to_json for child in self.children]
         }
 
 
