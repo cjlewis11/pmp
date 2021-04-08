@@ -13,6 +13,7 @@ from etabotapp import eta_tasks as et
 from etabotapp import django_tasks as dt
 from django.conf import settings
 import logging
+import json
 
 test_tms_data = getattr(settings, "TEST_TMS_DATA", {})
 
@@ -102,7 +103,10 @@ class TestStoreReportsInProjectSettings(TestCase):
         self.project.save()
 
     def test_is_report_in_project_settings(self):
+        testingJson = json.dumps({"basic":"test"})
+
+
         et.estimate_ETA_for_TMS(self.tms, [self.project])
         assert isinstance(self.project.project_settings, dict)
-        self.assertEqual(self.project.project_settings, {'report',
-                                                         'hierarchical_report'})
+        self.assertTrue(self.project.project_settings['hierarchical_report'])
+        self.assertTrue(type(testingJson) == type(self.project.project_settings['hierarchical_report']))
